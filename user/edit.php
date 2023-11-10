@@ -44,6 +44,7 @@
 			$last=$row['last'];
 			$username=$row['username'];
 			$password=$row['password'];
+            $uic=$row['uic'];
 			$email=$row['email'];
 			$contact=$row['contact'];
 		}

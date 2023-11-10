@@ -303,9 +303,7 @@ if (isset($_POST['submit1'])) {
       <?php
   }
 }
-
-
-	?>
+?>
 </div>
 </body>
 </html>

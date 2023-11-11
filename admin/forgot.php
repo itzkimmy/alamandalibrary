@@ -6,6 +6,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../style.css">
+<title>Alamanda Library</title>
 </head>
 <body>
 	<div class="box1">

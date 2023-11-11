@@ -5,6 +5,7 @@
  <!DOCTYPE html>
  <html>
  <head>
+ <title>Alamanda Library</title>
  	<style type="text/css">
  		.wrapper
  		{

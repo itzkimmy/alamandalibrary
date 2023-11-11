@@ -4,6 +4,7 @@
 ?>
 <!DOCTYPE html>
 <html>
+<title>Alamanda Library</title>
 <head>
 	<style type="text/css">
 		.form-control

@@ -125,50 +125,51 @@ function closeNav() {
 
 <div class="container">
     <div class="srch">
-	<form class="navbar-form" method="post" name="form1">
-			
-			<input class="form-control" type="text" name="search" placeholder="User username.." required="">
-			<button style="background-color: #6db6b9e6;" type="submit" name="submit" class="btn btn-default">
-				<span class="glyphicon glyphicon-search"></span>
-			</button>
-	</form>
+        <form class="navbar-form" method="post" name="form1">
+            <input class="form-control" type="text" name="search" placeholder="User username.." required="">
+            <button style="background-color: #6db6b9e6;" type="submit" name="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </form>
     </div>
 
     <h2>List Of Users</h2>
     <?php
     if (isset($_POST['submit'])) {
-        // Your search logic
+        $searchUsername = $_POST['search'];
+        $res = mysqli_query($db, "SELECT first, last, username, uic, email, contact FROM `user` WHERE username LIKE '%$searchUsername%'");
     } else {
-        $res = mysqli_query($db, "SELECT first,last,username,uic,email,contact FROM `user`;");
-        echo "<table class='table table-bordered table-hover' >";
-        echo "<tr style='background-color: #6db6b9e6;'>";
-        // Table header
-        echo "<th>"; echo "First Name"; echo "</th>";
-        echo "<th>"; echo "Last Name"; echo "</th>";
-        echo "<th>"; echo "Username"; echo "</th>";
-        echo "<th>"; echo "IC No"; echo "</th>";
-        echo "<th>"; echo "Email"; echo "</th>";
-        echo "<th>"; echo "Contact"; echo "</th>";
-        echo "</tr>";
-
-        while ($row = mysqli_fetch_assoc($res)) {
-            echo "<tr>";
-            echo "<td>"; echo $row['first']; echo "</td>";
-            echo "<td>"; echo $row['last']; echo "</td>";
-            echo "<td>"; echo $row['username']; echo "</td>";
-            echo "<td>"; echo $row['uic']; echo "</td>";
-            echo "<td>"; echo $row['email']; echo "</td>";
-            echo "<td>"; echo $row['contact']; echo "</td>";
-            echo "<td>";
-			echo "<form method='post'>";
-			echo "<input type='hidden' name='bid' value='" . $row['uic'] . "'/>";
-			echo "<button type='submit' name='submit2' class='btn btn-danger'>Delete</button>";
-			echo "</form>";
-			echo "</td>";
-			echo "</tr>";	
-        }
-        echo "</table>";
+        $res = mysqli_query($db, "SELECT first, last, username, uic, email, contact FROM `user`;");
     }
+
+    echo "<table class='table table-bordered table-hover' >";
+    echo "<tr style='background-color: #6db6b9e6;'>";
+    // Table header
+    echo "<th>"; echo "First Name"; echo "</th>";
+    echo "<th>"; echo "Last Name"; echo "</th>";
+    echo "<th>"; echo "Username"; echo "</th>";
+    echo "<th>"; echo "IC No"; echo "</th>";
+    echo "<th>"; echo "Email"; echo "</th>";
+    echo "<th>"; echo "Contact"; echo "</th>";
+    echo "</tr>";
+
+    while ($row = mysqli_fetch_assoc($res)) {
+        echo "<tr>";
+        echo "<td>"; echo $row['first']; echo "</td>";
+        echo "<td>"; echo $row['last']; echo "</td>";
+        echo "<td>"; echo $row['username']; echo "</td>";
+        echo "<td>"; echo $row['uic']; echo "</td>";
+        echo "<td>"; echo $row['email']; echo "</td>";
+        echo "<td>"; echo $row['contact']; echo "</td>";
+        echo "<td>";
+        echo "<form method='post'>";
+        echo "<input type='hidden' name='bid' value='" . $row['uic'] . "'/>";
+        echo "<button type='submit' name='submit2' class='btn btn-danger'>Delete</button>";
+        echo "</form>";
+        echo "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
 
     if (isset($_POST['submit2'])) {
         // Your delete logic

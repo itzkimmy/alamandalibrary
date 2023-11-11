@@ -84,12 +84,13 @@
     background-color: #00544c;
   }
   .container
-  {
-    height: 600px;
-    background-color: black;
-    opacity: .8;
-    color: white;
-  }
+{
+	height: 600px;
+	background-color: black;
+	opacity: .8;
+	color: white;
+	border-radius: 20px;
+}
   .scroll
   {
     width: 100%;
@@ -148,20 +149,18 @@
 	  document.body.style.backgroundColor = "white";
 	}
 	</script>
-  <div class="container">
+<div class="container">
     <h3 style="text-align: center;">Information of Borrowed Books</h3><br>
     <?php
-    $c=0;
+    $c = 0;
 
-      if(isset($_SESSION['login_user']))
-      {
-        $sql="SELECT user.username,uic,books.bid,name,authors,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='Yes' ORDER BY `issue_book`.`return` ASC";
-        $res=mysqli_query($db,$sql);
-        
-        
+    if (isset($_SESSION['login_user'])) {
+        $sql = "SELECT user.username,uic,books.bid,name,authors,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='Yes' ORDER BY `issue_book`.`return` ASC";
+        $res = mysqli_query($db, $sql);
+
         echo "<table class='table table-bordered' style='width:100%;' >";
-        //Table header
-        
+        // Table header
+
         echo "<tr style='background-color: #6db6b9e6;'>";
         echo "<th>"; echo "Username";  echo "</th>";
         echo "<th>"; echo "IC No";  echo "</th>";
@@ -170,36 +169,71 @@
         echo "<th>"; echo "Author";  echo "</th>";
         echo "<th>"; echo "Issue Date";  echo "</th>";
         echo "<th>"; echo "Return Date";  echo "</th>";
+        echo "<th>"; echo "Action";  echo "</th>";  // Added "Action" column
 
-      echo "</tr>"; 
-      echo "</table>";
-
-       echo "<div class='scroll'>";
-        echo "<table class='table table-bordered' >";
-      while($row=mysqli_fetch_assoc($res))
-      {
-        echo "<tr>";
-          echo "<td>"; echo $row['username']; echo "</td>";
-          echo "<td>"; echo $row['uic']; echo "</td>";
-          echo "<td>"; echo $row['bid']; echo "</td>";
-          echo "<td>"; echo $row['name']; echo "</td>";
-          echo "<td>"; echo $row['authors']; echo "</td>";
-          echo "<td>"; echo $row['issue']; echo "</td>";
-          echo "<td>"; echo $row['return']; echo "</td>";
         echo "</tr>";
-      }
-    echo "</table>";
+        echo "</table>";
+
+        echo "<div class='scroll'>";
+        echo "<table class='table table-bordered' >";
+        while ($row = mysqli_fetch_assoc($res)) {
+            echo "<tr>";
+            echo "<td>"; echo $row['username']; echo "</td>";
+            echo "<td>"; echo $row['uic']; echo "</td>";
+            echo "<td>"; echo $row['bid']; echo "</td>";
+            echo "<td>"; echo $row['name']; echo "</td>";
+            echo "<td>"; echo $row['authors']; echo "</td>";
+            echo "<td>"; echo $row['issue']; echo "</td>";
+            echo "<td>"; echo $row['return']; echo "</td>";
+            echo "<td>";
+            echo "<form method='post'>";
+            echo "<input type='hidden' name='username' value='" . $row['username'] . "'/>";
+            echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+            echo "<button type='submit' name='return' class='btn btn-success'>Returned</button>";
+            echo "</form>";
+            echo "&nbsp;&nbsp;";
+            echo "<form method='post'>";
+            echo "<input type='hidden' name='username' value='" . $row['username'] . "'/>";
+            echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+            echo "<button type='submit' name='expire' class='btn btn-danger'>Expired</button>";
+            echo "</form>";
+            echo "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
         echo "</div>";
-       
-      }
-      else
-      {
+    } else {
         ?>
-          <h3 style="text-align: center;">Login to see information of Borrowed Books</h3>
+        <h3 style="text-align: center;">Login to see information of Borrowed Books</h3>
         <?php
-      }
+    }
+
+    if (isset($_POST['return'])) {
+      $username = mysqli_real_escape_string($db, $_POST['username']);
+      $bid = mysqli_real_escape_string($db, $_POST['bid']);
+  
+      $returnStatus = '<p style="color:yellow; background-color:green;">RETURNED</p>';
+      mysqli_query($db, "UPDATE issue_book SET approve='$returnStatus' WHERE username='$username' AND bid='$bid' ");
+      mysqli_query($db, "UPDATE books SET quantity = quantity + 1 WHERE bid='$bid' ");
+      mysqli_query($db, "UPDATE books SET status = 'Available' WHERE bid='$bid' ");
+  
+      // Redirect to expired.php using JavaScript
+      echo '<script>window.location.href = "expired.php";</script>';
+      exit();
+  }
+  
+  if (isset($_POST['expire'])) {
+      $username = mysqli_real_escape_string($db, $_POST['username']);
+      $bid = mysqli_real_escape_string($db, $_POST['bid']);
+  
+      $expireStatus = '<p style="color:yellow; background-color:red;">EXPIRED</p>';
+      mysqli_query($db, "UPDATE issue_book SET approve='$expireStatus' WHERE username='$username' AND bid='$bid' ");
+  
+      // Redirect to expired.php using JavaScript
+      echo '<script>window.location.href = "expired.php";</script>';
+      exit();
+  }  
     ?>
-  </div>
 </div>
 </body>
 </html>

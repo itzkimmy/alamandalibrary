@@ -136,16 +136,6 @@ function closeNav() {
 				</button>
 		</form>
 	</div>
-	<!--___________________request book__________________-->
-	<div class="srch">
-		<form class="navbar-form" method="post" name="form1">
-			
-				<input class="form-control" type="text" name="bid" placeholder="Enter Book ID" required="">
-				<button style="background-color: #6db6b9e6;" type="submit" name="submit1" class="btn btn-default">Request
-				</button>
-		</form>
-	</div>
-
 
 	<h2>List Of Books</h2>
 	<?php
@@ -204,6 +194,13 @@ if (isset($_POST['submit'])) {
           echo "<td>";
           echo $row['quantity'];
           echo "</td>";
+          echo "<td><a href='bookdetails.php?bid=" . $row['bid'] . "' style='background-color: #00FFFF;' class='btn btn-default'>Details</a></td>";
+          echo "<td>";
+          echo "<form method='post'>";
+          echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+          echo "<button type='submit' name='submit1' class='btn btn-default'>Request</button>";
+          echo "</form>";
+          echo "</td>";
 
           echo "</tr>";
       }
@@ -259,6 +256,13 @@ if (isset($_POST['submit'])) {
       echo "<td>";
       echo $row['quantity'];
       echo "</td>";
+      echo "<td><a href='bookdetails.php?bid=" . $row['bid'] . "' style='background-color: #00FFFF;' class='btn btn-default'>Details</a></td>";
+      echo "<td>";
+      echo "<form method='post'>";
+      echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+      echo "<button type='submit' name='submit1' class='btn btn-warning'>Request</button>";
+      echo "</form>";
+      echo "</td>";
 
       echo "</tr>";
   }
@@ -267,33 +271,46 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['submit1'])) {
   if (isset($_SESSION['login_user'])) {
       $bid = $_POST['bid'];
-      $checkAvailabilityQuery = "SELECT status, quantity FROM books WHERE bid = '$bid'";
-      $result = mysqli_query($db, $checkAvailabilityQuery);
+      
+      // Check if the user has already requested the same book
+      $checkRequestQuery = "SELECT * FROM issue_book WHERE username = '$_SESSION[login_user]' AND bid = '$bid'";
+      $existingRequest = mysqli_query($db, $checkRequestQuery);
 
-      if ($result && mysqli_num_rows($result) > 0) {
-          $bookData = mysqli_fetch_assoc($result);
-          $status = $bookData['status'];
-          $quantity = $bookData['quantity'];
-
-          if ($status === 'Available' && $quantity > 0) {
-              // The book is available, proceed with the request
-              mysqli_query($db, "INSERT INTO issue_book Values('$_SESSION[login_user]', '$bid', '', '', '');");
-              ?>
-              <script type="text/javascript">
-                  window.location = "request.php";
-              </script>
-              <?php
-          } else {
-              // The book is not available
-              ?>
-              <script type="text/javascript">
-                  alert("This book is not available right now.");
-              </script>
-              <?php
-          }
+      if ($existingRequest && mysqli_num_rows($existingRequest) > 0) {
+          ?>
+          <script type="text/javascript">
+              alert("You have already requested this book.");
+          </script>
+          <?php
       } else {
-          // Handle the SQL query error
-          echo "SQL Error: " . mysqli_error($db);
+          $checkAvailabilityQuery = "SELECT status, quantity FROM books WHERE bid = '$bid'";
+          $result = mysqli_query($db, $checkAvailabilityQuery);
+
+          if ($result && mysqli_num_rows($result) > 0) {
+              $bookData = mysqli_fetch_assoc($result);
+              $status = $bookData['status'];
+              $quantity = $bookData['quantity'];
+
+              if ($status === 'Available' && $quantity > 0) {
+                  // The book is available, proceed with the request
+                  mysqli_query($db, "INSERT INTO issue_book VALUES('$_SESSION[login_user]', '$bid', '', '', '');");
+                  ?>
+                  <script type="text/javascript">
+                      window.location = "request.php";
+                  </script>
+                  <?php
+              } else {
+                  // The book is not available
+                  ?>
+                  <script type="text/javascript">
+                      alert("This book is not available right now.");
+                  </script>
+                  <?php
+              }
+          } else {
+              // Handle the SQL query error
+              echo "SQL Error: " . mysqli_error($db);
+          }
       }
   } else {
       ?>

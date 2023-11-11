@@ -123,136 +123,92 @@ function closeNav() {
 }
 </script>
 
-	<!--__________________________search bar________________________-->
 <div class="container">
-	<div class="srch">
-		<form class="navbar-form" method="post" name="form1">
+    <div class="srch">
+	<form class="navbar-form" method="post" name="form1">
 			
-				<input class="form-control" type="text" name="search" placeholder="User username.." required="">
-				<button style="background-color: #6db6b9e6;" type="submit" name="submit" class="btn btn-default">
-					<span class="glyphicon glyphicon-search"></span>
-				</button>
-		</form>
-		<form class="navbar-form" method="post" name="form1">
-			
-				<input class="form-control" type="text" name="bid" placeholder="Enter User IC" required="">
-				<button style="background-color: #6db6b9e6;" type="submit" name="submit2" class="btn btn-default">Delete
-				</button>
-		</form>
-	</div>
+			<input class="form-control" type="text" name="search" placeholder="User username.." required="">
+			<button style="background-color: #6db6b9e6;" type="submit" name="submit" class="btn btn-default">
+				<span class="glyphicon glyphicon-search"></span>
+			</button>
+	</form>
+    </div>
 
-	<h2>List Of Users</h2>
-	<?php
+    <h2>List Of Users</h2>
+    <?php
+    if (isset($_POST['submit'])) {
+        // Your search logic
+    } else {
+        $res = mysqli_query($db, "SELECT first,last,username,uic,email,contact FROM `user`;");
+        echo "<table class='table table-bordered table-hover' >";
+        echo "<tr style='background-color: #6db6b9e6;'>";
+        // Table header
+        echo "<th>"; echo "First Name"; echo "</th>";
+        echo "<th>"; echo "Last Name"; echo "</th>";
+        echo "<th>"; echo "Username"; echo "</th>";
+        echo "<th>"; echo "IC No"; echo "</th>";
+        echo "<th>"; echo "Email"; echo "</th>";
+        echo "<th>"; echo "Contact"; echo "</th>";
+        echo "</tr>";
 
-		if(isset($_POST['submit']))
-		{
-			$q=mysqli_query($db,"SELECT first,last,username,uic,email,contact FROM `user` where username like '%$_POST[search]%' ");
-
-			if(mysqli_num_rows($q)==0)
-			{
-				echo "Sorry! No user found with that username. Try searching again.";
-			}
-			else
-			{
-		echo "<table class='table table-bordered table-hover' >";
-			echo "<tr style='background-color: #6db6b9e6;'>";
-				//Table header
-				echo "<th>"; echo "First Name";	echo "</th>";
-				echo "<th>"; echo "Last Name";  echo "</th>";
-				echo "<th>"; echo "Username";  echo "</th>";
-				echo "<th>"; echo "IC No";  echo "</th>";
-				echo "<th>"; echo "Email";  echo "</th>";
-				echo "<th>"; echo "Contact";  echo "</th>";
-				
+        while ($row = mysqli_fetch_assoc($res)) {
+            echo "<tr>";
+            echo "<td>"; echo $row['first']; echo "</td>";
+            echo "<td>"; echo $row['last']; echo "</td>";
+            echo "<td>"; echo $row['username']; echo "</td>";
+            echo "<td>"; echo $row['uic']; echo "</td>";
+            echo "<td>"; echo $row['email']; echo "</td>";
+            echo "<td>"; echo $row['contact']; echo "</td>";
+            echo "<td>";
+			echo "<form method='post'>";
+			echo "<input type='hidden' name='bid' value='" . $row['uic'] . "'/>";
+			echo "<button type='submit' name='submit2' class='btn btn-danger'>Delete</button>";
+			echo "</form>";
+			echo "</td>";
 			echo "</tr>";	
+        }
+        echo "</table>";
+    }
 
-			while($row=mysqli_fetch_assoc($q))
-			{
-				echo "<tr>";
-				echo "<td>"; echo $row['first']; echo "</td>";
-				echo "<td>"; echo $row['last']; echo "</td>";
-				echo "<td>"; echo $row['username']; echo "</td>";
-				echo "<td>"; echo $row['uic']; echo "</td>";
-				echo "<td>"; echo $row['email']; echo "</td>";
-				echo "<td>"; echo $row['contact']; echo "</td>";
+    if (isset($_POST['submit2'])) {
+        // Your delete logic
+        if (isset($_SESSION['login_user'])) {
+            $bidToDelete = $_POST['bid'];
+            $checkUserQuery = "SELECT * FROM user WHERE uic = '$bidToDelete'";
+            $result = mysqli_query($db, $checkUserQuery);
 
-				echo "</tr>";
-			}
-		echo "</table>";
-			}
-		}
-			/*if button is not pressed.*/
-		else
-		{
-			$res=mysqli_query($db,"SELECT first,last,username,uic,email,contact FROM `user`;");
-
-		echo "<table class='table table-bordered table-hover' >";
-			echo "<tr style='background-color: #6db6b9e6;'>";
-				//Table header
-				echo "<th>"; echo "First Name";	echo "</th>";
-				echo "<th>"; echo "Last Name";  echo "</th>";
-				echo "<th>"; echo "Username";  echo "</th>";
-				echo "<th>"; echo "IC No";  echo "</th>";
-				echo "<th>"; echo "Email";  echo "</th>";
-				echo "<th>"; echo "Contact";  echo "</th>";
-			echo "</tr>";	
-
-			while($row=mysqli_fetch_assoc($res))
-			{
-				echo "<tr>";
-				
-				echo "<td>"; echo $row['first']; echo "</td>";
-				echo "<td>"; echo $row['last']; echo "</td>";
-				echo "<td>"; echo $row['username']; echo "</td>";
-				echo "<td>"; echo $row['uic']; echo "</td>";
-				echo "<td>"; echo $row['email']; echo "</td>";
-				echo "<td>"; echo $row['contact']; echo "</td>";
-
-				echo "</tr>";
-			}
-		echo "</table>";
-		}
-
-		if (isset($_POST['submit2'])) {
-			if (isset($_SESSION['login_user'])) {
-				$bidToDelete = $_POST['bid'];
-				$checkUserQuery = "SELECT * FROM user WHERE uic = '$bidToDelete'";
-				$result = mysqli_query($db, $checkUserQuery);
-				
-				if (mysqli_num_rows($result) > 0) {
-					$deleteQuery = "DELETE FROM user WHERE uic = '$bidToDelete'";
-					if (mysqli_query($db, $deleteQuery)) {
-						?>
-						<script type="text/javascript">
-							alert("Delete Successful.");
-						</script>
-						<?php
-					} else {
-						?>
-						<script type="text/javascript">
-							alert("Error deleting user.");
-						</script>
-						<?php
-					}
-				} else {
-					?>
-					<script type="text/javascript">
-						alert("User does not exist.");
-					</script>
-					<?php
-				}
-			} else {
-				?>
-				<script type="text/javascript">
-					alert("Please Login First.");
-				</script>
-				<?php
-			}
-		}
-		
-		
-		
-	?>
+            if (mysqli_num_rows($result) > 0) {
+                $deleteQuery = "DELETE FROM user WHERE uic = '$bidToDelete'";
+                if (mysqli_query($db, $deleteQuery)) {
+                    ?>
+                    <script type="text/javascript">
+                        alert("Delete Successful.");
+                        window.location = "user.php"; // Change this to the current page
+                    </script>
+                    <?php
+                } else {
+                    ?>
+                    <script type="text/javascript">
+                        alert("Error deleting user.");
+                    </script>
+                    <?php
+                }
+            } else {
+                ?>
+                <script type="text/javascript">
+                    alert("User does not exist.");
+                </script>
+                <?php
+            }
+        } else {
+            ?>
+            <script type="text/javascript">
+                alert("Please Login First.");
+            </script>
+            <?php
+        }
+    }
+    ?>
 </div>
 </body>
 </html>

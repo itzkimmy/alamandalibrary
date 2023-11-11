@@ -84,12 +84,13 @@
     background-color: #00544c;
   }
   .container
-  {
-    height: 700px;
-    background-color: black;
-    opacity: .8;
-    color: white;
-  }
+{
+	height: 600px;
+	background-color: black;
+	opacity: .8;
+	color: white;
+	border-radius: 20px;
+}
   .scroll
   {
     width: 100%;
@@ -161,48 +162,7 @@
                       &nbsp&nbsp
           <button name="submit3" type="submit" class="btn btn-default" style="background-color: red; color: yellow;">EXPIRED</button>
       </form>
-      </div>
-
-          <div class="srch" >
-          <br>
-          <form method="post" action="" name="form1">
-            <input type="text" name="username" class="form-control" placeholder="Username" required=""><br>
-            <input type="text" name="bid" class="form-control" placeholder="ISBN" required=""><br>
-            <button class="btn btn-default" name="submit" type="submit">Return</button>
-            <button class="btn btn-default" name="submit1" type="submit">Expired</button><br><br>
-          </form>
-        </div>
         <?php
-
-        if(isset($_POST['submit']))
-        {
-
-          $res=mysqli_query($db,"SELECT * FROM `issue_book` where username='$_POST[username]' and bid='$_POST[bid]' ;");
-        
-          $var1='<p style="color:yellow; background-color:green;">RETURNED</p>';
-          mysqli_query($db,"UPDATE issue_book SET approve='$var1' where username='$_POST[username]' and bid='$_POST[bid]' ");
-
-          mysqli_query($db,"UPDATE books SET quantity = quantity+1 where bid='$_POST[bid]' ");
-
-          mysqli_query($db,"UPDATE books SET status = 'Available' where bid='$_POST[bid]' ");
-          
-        }
-
-        if(isset($_POST['submit1']))
-        {
-
-          $res=mysqli_query($db,"SELECT * FROM `issue_book` where username='$_POST[username]' and bid='$_POST[bid]' ;");
-        
-          $var2='<p style="color:yellow; background-color:red;">EXPIRED</p>';
-
-          mysqli_query($db,"UPDATE issue_book SET approve='$var2' where username='$_POST[username]' and bid='$_POST[bid]' ");
-          
-        }
-      
-    
-    $c=0;
-
-      
          $ret='<p style="color:yellow; background-color:green;">RETURNED</p>';
          $exp='<p style="color:yellow; background-color:red;">EXPIRED</p>';
         
@@ -264,7 +224,6 @@
     <?php
   }
     ?>
-  </div>
 </div>
 </body>
 </html>

@@ -84,12 +84,13 @@
     background-color: #00544c;
   }
   .container
-  {
-    height: 600px;
-    background-color: black;
-    opacity: .8;
-    color: white;
-  }
+{
+	height: 600px;
+	background-color: black;
+	opacity: .8;
+	color: white;
+	border-radius: 20px;
+}
   .Approve
   {
     margin-left: 420px;
@@ -142,7 +143,8 @@
 	  document.body.style.backgroundColor = "white";
 	}
 	</script>
-  <div class="container">
+
+<div class="container">
     <br><h3 style="text-align: center;">Approve Request</h3><br><br>
     
     <form class="Approve" action="" method="post">
@@ -181,5 +183,6 @@
     <?php
   }
 ?>
+</div>
 </body>
 </html>

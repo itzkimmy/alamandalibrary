@@ -132,6 +132,9 @@
         <input type="text" name="name" class="form-control" placeholder="Title" required=""><br>
         <input type="text" name="authors" class="form-control" placeholder="Author" required=""><br>
         <input type="text" name="publisher" class="form-control" placeholder="Publisher" required=""><br>
+        <input type="text" name="published" class="form-control" placeholder="Published" required=""><br>
+        <input type="text" name="language" class="form-control" placeholder="Language" required=""><br>
+        <textarea name="description" class="form-control" placeholder="Description" required></textarea><br>
         <input type="text" name="status" class="form-control" placeholder="Status" required=""><br>
         <input type="text" name="quantity" class="form-control" placeholder="Quantity" required=""><br>
 
@@ -159,14 +162,14 @@ if (isset($_POST['submit'])) {
           // Move the uploaded image to the new location with the unique filename
           if (move_uploaded_file($image['tmp_name'], $new_filename)) {
               // Create a prepared statement to insert the book data
-              $sql = "INSERT INTO books (image, bid, name, authors, publisher, status, quantity) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?)";
+              $sql = "INSERT INTO books (image, bid, name, authors, publisher, published, language, description, status, quantity) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
               $stmt = mysqli_prepare($db, $sql);
 
               if ($stmt) {
                   // Bind parameters with proper data types
-                  mysqli_stmt_bind_param($stmt, "sssssss", $new_filename, $book_id, $_POST['name'], $_POST['authors'], $_POST['publisher'], $_POST['status'], $_POST['quantity']);
+                  mysqli_stmt_bind_param($stmt, "ssssssssss", $new_filename, $book_id, $_POST['name'], $_POST['authors'], $_POST['publisher'], $_POST['published'], $_POST['language'], $_POST['description'], $_POST['status'], $_POST['quantity']);
 
                   // Execute the statement
                   if (mysqli_stmt_execute($stmt)) {

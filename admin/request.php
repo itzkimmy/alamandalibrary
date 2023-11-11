@@ -144,7 +144,7 @@
 	</script>
 	<br>
 
-<div class="container">
+  <div class="container">
 	<div class="srch">
 		<br>
 		<form method="post" action="" name="form1">
@@ -235,7 +235,6 @@
 	}	
 
 	?>
-	</div>
 </div>
 </body>
 </html>

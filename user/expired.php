@@ -151,47 +151,39 @@
 	  document.body.style.backgroundColor = "white";
 	}
 	</script>
-  <div class="container">
-    
+<div class="container">
     <?php
-      if(isset($_SESSION['login_user']))
-      {
+    if(isset($_SESSION['login_user'])) {
         ?>
 
-      <div style="float: left; padding-left:  5px; padding-top: 20px;">
-      <form method="post" action="">
-          <button name="submit2" type="submit" class="btn btn-default" style="background-color: #06861a; color: yellow;">RETURNED</button> 
-                      &nbsp&nbsp
-          <button name="submit3" type="submit" class="btn btn-default" style="background-color: red; color: yellow;">EXPIRED</button>
-      </form>
-      </div>
-      <div style="float: left;padding-top: 10px;">
+        <div style="float: left; padding-left: 5px; padding-top: 20px;">
+            <form method="post" action="">
+                <button name="submit2" type="submit" class="btn btn-default" style="background-color: #06861a; color: yellow;">RETURNED</button> 
+                &nbsp&nbsp
+                <button name="submit3" type="submit" class="btn btn-default" style="background-color: red; color: yellow;">EXPIRED</button>
+            </form>
+        </div>
+        <div style="float: left;padding-top: 10px;">
 
         <?php
 
-      
-         $ret='<p style="color:yellow; background-color:green;">RETURNED</p>';
-         $exp='<p style="color:yellow; background-color:red;">EXPIRED</p>';
-        
-         if(isset($_POST['submit2']))
-         {
-             $sql="SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='$ret' and issue_book.username ='".$_SESSION['login_user']."'  ORDER BY `issue_book`.`return` DESC";
-             $res=mysqli_query($db,$sql);
-         }
-         elseif(isset($_POST['submit3']))
-         {
-             $sql="SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='$exp' and issue_book.username ='".$_SESSION['login_user']."' ORDER BY `issue_book`.`return` DESC";
-             $res=mysqli_query($db,$sql);
-         }
-         else
-         {
-             $sql="SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve !='' and issue_book.approve !='Yes'  and issue_book.username ='".$_SESSION['login_user']."' ORDER BY `issue_book`.`return` DESC";
-             $res=mysqli_query($db,$sql);
-         }
+        $ret = '<p style="color:yellow; background-color:green;">RETURNED</p>';
+        $exp = '<p style="color:yellow; background-color:red;">EXPIRED</p>';
+
+        if(isset($_POST['submit2'])) {
+            $sql = "SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='$ret' and issue_book.username ='".$_SESSION['login_user']."'  ORDER BY `issue_book`.`return` DESC";
+            $res = mysqli_query($db, $sql);
+        } elseif(isset($_POST['submit3'])) {
+            $sql = "SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve ='$exp' and issue_book.username ='".$_SESSION['login_user']."' ORDER BY `issue_book`.`return` DESC";
+            $res = mysqli_query($db, $sql);
+        } else {
+            $sql = "SELECT user.username,uic,books.bid,name,authors,approve,issue,issue_book.return FROM user inner join issue_book ON user.username=issue_book.username inner join books ON issue_book.bid=books.bid WHERE issue_book.approve !='' and issue_book.approve !='Yes'  and issue_book.username ='".$_SESSION['login_user']."' ORDER BY `issue_book`.`return` DESC";
+            $res = mysqli_query($db, $sql);
+        }
 
         echo "<table class='table table-bordered' style='width:100%;' >";
         //Table header
-        
+
         echo "<tr style='background-color: #6db6b9e6;'>";
         echo "<th>"; echo "Username";  echo "</th>";
         echo "<th>"; echo "IC No";  echo "</th>";
@@ -201,37 +193,60 @@
         echo "<th>"; echo "Status";  echo "</th>";
         echo "<th>"; echo "Issue Date";  echo "</th>";
         echo "<th>"; echo "Return Date";  echo "</th>";
-
-      echo "</tr>"; 
-      echo "</table>";
-
-       echo "<div class='scuic'>";
-       echo "<table class='table table-bordered' >";
-      while($row=mysqli_fetch_assoc($res))
-      {
-        echo "<tr>";
-          echo "<td>"; echo $row['username']; echo "</td>";
-          echo "<td>"; echo $row['uic']; echo "</td>";
-          echo "<td>"; echo $row['bid']; echo "</td>";
-          echo "<td>"; echo $row['name']; echo "</td>";
-          echo "<td>"; echo $row['authors']; echo "</td>";
-          echo "<td>"; echo $row['approve']; echo "</td>";
-          echo "<td>"; echo $row['issue']; echo "</td>";
-          echo "<td>"; echo $row['return']; echo "</td>";
+        echo "<th>"; echo "Action";  echo "</th>"; // Add this column for the return action
         echo "</tr>";
-      }
-    echo "</table>";
-        echo "</div>";
-      }
 
-      else {
+        echo "</table>";
+
+        echo "<div class='scuic'>";
+        echo "<table class='table table-bordered' >";
+        while($row = mysqli_fetch_assoc($res)) {
+            echo "<tr>";
+            echo "<td>"; echo $row['username']; echo "</td>";
+            echo "<td>"; echo $row['uic']; echo "</td>";
+            echo "<td>"; echo $row['bid']; echo "</td>";
+            echo "<td>"; echo $row['name']; echo "</td>";
+            echo "<td>"; echo $row['authors']; echo "</td>";
+            echo "<td>"; echo $row['approve']; echo "</td>";
+            echo "<td>"; echo $row['issue']; echo "</td>";
+            echo "<td>"; echo $row['return']; echo "</td>";
+
+            // Add a form for return action
+            if ($row['approve'] == $exp) {
+                echo "<td>";
+                echo "<form method='post'>";
+                echo "<input type='hidden' name='username' value='" . $row['username'] . "'/>";
+                echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+                echo "<button type='submit' name='return' class='btn btn-success'>Return</button>";
+                echo "</form>";
+                echo "</td>";
+            } else {
+                echo "<td></td>";
+            }
+
+            echo "</tr>";
+        }
+        echo "</table>";
+        echo "</div>";
+    } else {
         ?>
         <h3 style="text-align: center;">You Must login to see Expired List</h3>
-      <?php
+        <?php
     }
-
+    if (isset($_POST['return'])) {
+      $username = mysqli_real_escape_string($db, $_POST['username']);
+      $bid = mysqli_real_escape_string($db, $_POST['bid']);
+  
+      $returnStatus = '<p style="color:yellow; background-color:green;">RETURNED</p>';
+      mysqli_query($db, "UPDATE issue_book SET approve='$returnStatus' WHERE username='$username' AND bid='$bid' ");
+      mysqli_query($db, "UPDATE books SET quantity = quantity + 1 WHERE bid='$bid' ");
+      mysqli_query($db, "UPDATE books SET status = 'Available' WHERE bid='$bid' ");
+  
+      // Redirect to expired.php using JavaScript
+      echo '<script>window.location.href = "expired.php";</script>';
+      exit();
+  }
     ?>
-  </div>
 </div>
 </body>
 </html>

@@ -271,46 +271,35 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['submit1'])) {
   if (isset($_SESSION['login_user'])) {
       $bid = $_POST['bid'];
-      
-      // Check if the user has already requested the same book
-      $checkRequestQuery = "SELECT * FROM issue_book WHERE username = '$_SESSION[login_user]' AND bid = '$bid'";
-      $existingRequest = mysqli_query($db, $checkRequestQuery);
 
-      if ($existingRequest && mysqli_num_rows($existingRequest) > 0) {
-          ?>
-          <script type="text/javascript">
-              alert("You have already requested this book.");
-          </script>
-          <?php
-      } else {
-          $checkAvailabilityQuery = "SELECT status, quantity FROM books WHERE bid = '$bid'";
-          $result = mysqli_query($db, $checkAvailabilityQuery);
+      // Check book availability
+      $checkAvailabilityQuery = "SELECT status, quantity FROM books WHERE bid = '$bid'";
+      $result = mysqli_query($db, $checkAvailabilityQuery);
 
-          if ($result && mysqli_num_rows($result) > 0) {
-              $bookData = mysqli_fetch_assoc($result);
-              $status = $bookData['status'];
-              $quantity = $bookData['quantity'];
+      if ($result && mysqli_num_rows($result) > 0) {
+          $bookData = mysqli_fetch_assoc($result);
+          $status = $bookData['status'];
+          $quantity = $bookData['quantity'];
 
-              if ($status === 'Available' && $quantity > 0) {
-                  // The book is available, proceed with the request
-                  mysqli_query($db, "INSERT INTO issue_book VALUES('$_SESSION[login_user]', '$bid', '', '', '');");
-                  ?>
-                  <script type="text/javascript">
-                      window.location = "request.php";
-                  </script>
-                  <?php
-              } else {
-                  // The book is not available
-                  ?>
-                  <script type="text/javascript">
-                      alert("This book is not available right now.");
-                  </script>
-                  <?php
-              }
+          if ($status === 'Available' && $quantity > 0) {
+              // The book is available, proceed with the request
+              mysqli_query($db, "INSERT INTO issue_book VALUES('$_SESSION[login_user]', '$bid', '', '', '');");
+              ?>
+              <script type="text/javascript">
+                  window.location = "request.php";
+              </script>
+              <?php
           } else {
-              // Handle the SQL query error
-              echo "SQL Error: " . mysqli_error($db);
+              // The book is not available
+              ?>
+              <script type="text/javascript">
+                  alert("This book is not available right now.");
+              </script>
+              <?php
           }
+      } else {
+          // Handle the SQL query error
+          echo "SQL Error: " . mysqli_error($db);
       }
   } else {
       ?>

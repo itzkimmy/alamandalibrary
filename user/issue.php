@@ -165,9 +165,8 @@ if (isset($_SESSION['login_user'])) {
 
     // Check if there are rows with approved status
     if (mysqli_num_rows($res) > 0) {
-        echo "<table class='table table-bordered' style='width:100%;' >";
+        echo "<table class='table table-bordered '>";
         // Table header
-
         echo "<tr style='background-color: #6db6b9e6;'>";
         echo "<th>"; echo "Username";  echo "</th>";
         echo "<th>"; echo "IC No";  echo "</th>";
@@ -176,12 +175,9 @@ if (isset($_SESSION['login_user'])) {
         echo "<th>"; echo "Author";  echo "</th>";
         echo "<th>"; echo "Issue Date";  echo "</th>";
         echo "<th>"; echo "Return Date";  echo "</th>";
-
+        echo "<th>"; echo "Action";  echo "</th>"; // Add this column for the return action
         echo "</tr>";
-        echo "</table>";
 
-        echo "<div class='scuic'>";
-        echo "<table class='table table-bordered' >";
         while ($row = mysqli_fetch_assoc($res)) {
             // Check if the approval status is not expired or returned
             if ($row['approve'] != '<p style="color:yellow; background-color:red;">EXPIRED</p>' && $row['approve'] != '<p style="color:yellow; background-color:green;">RETURNED</p>') {
@@ -193,11 +189,35 @@ if (isset($_SESSION['login_user'])) {
                 echo "<td>"; echo $row['authors']; echo "</td>";
                 echo "<td>"; echo $row['issue']; echo "</td>";
                 echo "<td>"; echo $row['return']; echo "</td>";
+
+                // Add a form for return action
+                echo "<td>";
+                echo "<form method='post'>";
+                echo "<input type='hidden' name='username' value='" . $row['username'] . "'/>";
+                echo "<input type='hidden' name='bid' value='" . $row['bid'] . "'/>";
+                echo "<button type='submit' name='return' class='btn btn-success'>Return</button>";
+                echo "</form>";
+                echo "</td>";
+
                 echo "</tr>";
             }
         }
         echo "</table>";
-        echo "</div>";
+
+        // Handle the return logic when the form is submitted
+        if (isset($_POST['return'])) {
+            $username = mysqli_real_escape_string($db, $_POST['username']);
+            $bid = mysqli_real_escape_string($db, $_POST['bid']);
+
+            $returnStatus = '<p style="color:yellow; background-color:green;">RETURNED</p>';
+            mysqli_query($db, "UPDATE issue_book SET approve='$returnStatus' WHERE username='$username' AND bid='$bid' ");
+            mysqli_query($db, "UPDATE books SET quantity = quantity + 1 WHERE bid='$bid' ");
+            mysqli_query($db, "UPDATE books SET status = 'Available' WHERE bid='$bid' ");
+
+            // Redirect to expired.php using JavaScript
+            echo '<script>window.location.href = "expired.php";</script>';
+            exit();
+        }
     } else {
         // No rows with approved status
         echo "<h3 style='text-align: center;'>No approved requests.</h3>";

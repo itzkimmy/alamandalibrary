@@ -31,7 +31,7 @@
     <br><br><br><br>
     
     <div class="box2">
-        <h1 style="text-align: center; font-size: 30px;">Admin Registration Form</h1>
+        <h1 style="text-align: center; font-size: 30px;">User Registration Form</h1>
         <br><br>
       <form name="Registration" action="" method="post">
         

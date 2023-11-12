@@ -52,7 +52,7 @@
 
                 <li><a href="userLogin.php"><span class="glyphicon glyphicon-log-in"> LOGIN</span></a></li>
                 
-                <li><a href="registration.php"><span class="glyphicon glyphicon-user"> SIGN UP</span></a></li>
+                <li><a href="register.php"><span class="glyphicon glyphicon-user"> SIGN UP</span></a></li>
               </ul>
                 <?php
             }

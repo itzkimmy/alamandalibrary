@@ -180,7 +180,7 @@ function closeNav() {
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "alamanda";
+$dbname = "library";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

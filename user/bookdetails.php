@@ -175,7 +175,7 @@ function closeNav() {
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "alamanda";
+$dbname = "library";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

@@ -44,7 +44,7 @@
           <input class="form-control" type="text" name="email" placeholder="Email" required=""><br>
           <input class="form-control" type="text" name="contact" placeholder="Phone No" required=""><br>
           <input class="btn btn-default" type="submit" name="submit" value="Register" style="color: black; width: 70px; height: 30px" style="color: white; padding-left: 15px;">
-          Already have an account?<a style="color: yellow; text-decoration: none;" href="adminLogin.php">&nbspLogin</a>
+          Already have an account?<a style="color: yellow; text-decoration: none;" href="userLogin.php">&nbspLogin</a>
         </div>
       </form>
      
